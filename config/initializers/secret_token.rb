@@ -9,4 +9,19 @@
 
 # Make sure your secret_key_base is kept private
 # if you're sharing your code publicly.
-LrPreviewBook::Application.config.secret_key_base = 'c266ea98403eb6b6720755d9cd8e7259cd66d49de964e734c7e6a2aad573c154132cbd3138663fdd63f87217cc8a7f1329e41176fa42ac03422dcc2fa1d3651c'
+require 'securerandom'
+
+def secure_token
+  token_file = Rails.root.join('.secret')
+  if File.exist?(token_file)
+    # Use the existing token.
+    File.read(token_file).chomp
+  else
+    # Generate a new token and store it in token_file.
+    token = SecureRandom.hex(64)
+    File.write(token_file, token)
+    token
+  end
+end
+
+LrPreviewBook::Application.config.secret_key_base = secure_token
